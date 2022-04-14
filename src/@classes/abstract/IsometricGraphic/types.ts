@@ -2,7 +2,7 @@ import {
     StrokeLinecap,
     StrokeLinejoin,
     Texture
-} from '@types';
+} from '../../../@types/index.ts';
 
 export interface IsometricGraphicProps {
     fillColor?: string;

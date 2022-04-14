@@ -1,6 +1,6 @@
-import { IsometricPlaneView } from '@types';
-import { IsometricGraphic } from '@classes/abstract/IsometricGraphic';
-import { IsometricShapeProps } from './types';
+import { IsometricPlaneView } from '../../../@types/index.ts';
+import { IsometricGraphic } from '../IsometricGraphic/index.ts';
+import { IsometricShapeProps } from './types.ts';
 
 export abstract class IsometricShape extends IsometricGraphic {
 
@@ -15,7 +15,7 @@ export abstract class IsometricShape extends IsometricGraphic {
         this.posLeft = 0;
         this.posTop = 0;
     }
-    
+
     protected shapeView: IsometricPlaneView;
     protected posRight: number;
     protected posLeft: number;

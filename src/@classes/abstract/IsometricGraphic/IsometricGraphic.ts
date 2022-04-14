@@ -3,28 +3,28 @@ import {
     LineCap,
     LineJoin,
     DECIMALS
-} from '@constants';
+} from '../../../@constants/index.ts';
 import {
     IsometricPoint,
     IsometricPlaneView,
-    StrokeLinecap, 
+    StrokeLinecap,
     StrokeLinejoin,
     Listener,
     SVGAnimation,
     SVGAnimationObject,
     Texture
-} from '@types';
-import { SVG_NAMESPACE, SVG_ELEMENTS } from '@constants';
-import { IsometricStore } from '@classes/abstract/IsometricStore';
+} from '../../../@types/index.ts';
+import { SVG_NAMESPACE, SVG_ELEMENTS } from '../../../@constants/index.ts';
+import { IsometricStore } from '../IsometricStore/index.ts';
 import {
     addSVGProperties,
     addEventListenerToElement,
     removeEventListenerFromElement,
     getSVGProperty,
     getPatternTransform
-} from '@utils/svg';
-import { uuid, round, getPointFromIsometricPoint } from '@utils/math';
-import { IsometricGraphicProps } from './types';
+} from '../../../@utils/svg.ts';
+import { uuid, round, getPointFromIsometricPoint } from '../../../@utils/math.ts';
+import { IsometricGraphicProps } from './types.ts';
 
 const defaultGraphicProps: IsometricGraphicProps = {
     fillColor: Colors.white,
@@ -43,14 +43,14 @@ export abstract class IsometricGraphic extends IsometricStore {
 
         super();
 
-        this.props = {...defaultGraphicProps, ...props};
+        this.props = { ...defaultGraphicProps, ...props };
         this.path = document.createElementNS(SVG_NAMESPACE, SVG_ELEMENTS.path);
         this.listeners = [];
 
         if (this.props.texture) {
             this.createTexture(this.props.texture);
         }
-        
+
         addSVGProperties(this.path, {
             'fill': this.props.texture
                 ? `url(#${this.patternId}) ${this.fillColor}`
@@ -100,14 +100,14 @@ export abstract class IsometricGraphic extends IsometricStore {
     private _updateTexture() {
         const image = this.pattern.firstChild as SVGImageElement;
         if (
-            this.props.texture.url &&
+            this.props.texture?.url &&
             image.getAttribute('href') !== this.props.texture.url
         ) {
             addSVGProperties(image, {
                 'href': this.props.texture.url
             });
         }
-        if (this.props.texture.pixelated) {
+        if (this.props.texture?.pixelated) {
             addSVGProperties(image, {
                 'style': 'image-rendering: pixelated'
             });
@@ -117,10 +117,10 @@ export abstract class IsometricGraphic extends IsometricStore {
         this.update();
     }
 
-    protected props: IsometricGraphicProps;    
+    protected props: IsometricGraphicProps;
     protected path: SVGPathElement;
-    protected patternId: string;
-    protected pattern: SVGPatternElement;
+    protected patternId = "";
+    protected pattern: SVGPatternElement = null!;
     protected animations: SVGAnimationObject[];
     protected listeners: Listener[];
 
@@ -145,7 +145,7 @@ export abstract class IsometricGraphic extends IsometricStore {
                 attributeName: getSVGProperty(animation.property),
                 dur: `${animation.duration || 1}s`
             });
-            
+
             if (animation.values) {
                 addSVGProperties(
                     animation.element,
@@ -194,8 +194,8 @@ export abstract class IsometricGraphic extends IsometricStore {
                     x: round(corner.x + shift.x, DECIMALS),
                     y: round(corner.y + shift.y, DECIMALS)
                 },
-                this.props.texture.planeView || planeView,
-                this.props.texture.scale,                
+                this.props.texture.planeView || planeView!,
+                this.props.texture.scale,
                 this.props.texture.rotation
             );
             addSVGProperties(
@@ -218,7 +218,7 @@ export abstract class IsometricGraphic extends IsometricStore {
 
     // fillColor
     public get fillColor(): string {
-        return this.props.fillColor;
+        return this.props.fillColor!;
     }
 
     public set fillColor(value: string) {
@@ -232,7 +232,7 @@ export abstract class IsometricGraphic extends IsometricStore {
 
     // fillOpacity
     public get fillOpacity(): number {
-        return this.props.fillOpacity;
+        return this.props.fillOpacity!;
     }
 
     public set fillOpacity(value: number) {
@@ -244,21 +244,21 @@ export abstract class IsometricGraphic extends IsometricStore {
     public set texture(value: Texture) {
         const hasTexture = !!this.props.texture;
         this.props.texture = value;
-        if (hasTexture) {            
+        if (hasTexture) {
             this._updateTexture();
         } else {
             this.createTexture(this.props.texture);
             this.update();
-        } 
+        }
     }
 
-    public get texture(): Texture | undefined {
-        return this.props.texture;
+    public get texture(): Texture {
+        return this.props.texture!;
     }
 
     // strokeColor
     public get strokeColor(): string {
-        return this.props.strokeColor;
+        return this.props.strokeColor!;
     }
 
     public set strokeColor(value: string) {
@@ -268,7 +268,7 @@ export abstract class IsometricGraphic extends IsometricStore {
 
     // strokeDashArray
     public get strokeDashArray(): number[] {
-        return this.props.strokeDashArray;
+        return this.props.strokeDashArray!;
     }
 
     public set strokeDashArray(value: number[]) {
@@ -278,27 +278,27 @@ export abstract class IsometricGraphic extends IsometricStore {
 
     // strokeLinecap
     public get strokeLinecap(): StrokeLinecap {
-        return this.props.strokeLinecap;
+        return this.props.strokeLinecap!;
     }
 
     public set strokeLinecap(value: StrokeLinecap) {
-        this.props.strokeLinecap = LineCap[value];
+        this.props.strokeLinecap = LineCap[ value ];
         addSVGProperties(this.path, { 'stroke-linecap': this.strokeLinecap });
     }
 
     // strokeLinejoin
     public get strokeLinejoin(): StrokeLinejoin {
-        return this.props.strokeLinejoin;
+        return this.props.strokeLinejoin!;
     }
 
     public set strokeLinejoin(value: StrokeLinejoin) {
-        this.props.strokeLinejoin = LineJoin[value];
+        this.props.strokeLinejoin = LineJoin[ value ];
         addSVGProperties(this.path, { 'stroke-linejoin': this.strokeLinejoin });
     }
 
     // strokeOpacity
     public get strokeOpacity(): number {
-        return this.props.strokeOpacity;
+        return this.props.strokeOpacity!;
     }
 
     public set strokeOpacity(value: number) {
@@ -308,7 +308,7 @@ export abstract class IsometricGraphic extends IsometricStore {
 
     // strokeWidth
     public get strokeWidth(): number {
-        return this.props.strokeWidth;
+        return this.props.strokeWidth!;
     }
 
     public set strokeWidth(value: number) {
@@ -326,15 +326,15 @@ export abstract class IsometricGraphic extends IsometricStore {
 
     public updateTexture(value: Partial<Texture>) {
         const hasTexture = !!this.props.texture;
-        if (hasTexture || value.url) {            
+        if (hasTexture || value.url) {
             const { shift, rotation, ...newProps } = value;
             this.props.texture = hasTexture
-                ? {
+                ? <Texture>{
                     ...this.props.texture,
                     ...newProps
                 }
-                : { ...newProps } as Texture 
-            if (shift) {                
+                : { ...newProps } as Texture
+            if (shift) {
                 this.props.texture.shift = {
                     ...(this.props.texture.shift || {}),
                     ...shift
@@ -362,8 +362,8 @@ export abstract class IsometricGraphic extends IsometricStore {
 
         if (index >= 0 && index < this.animations.length) {
 
-            const animation = this.animations.splice(index, 1)[0];
-            
+            const animation = this.animations.splice(index, 1)[ 0 ];
+
             if (animation.element && animation.element.parentNode) {
                 animation.element.parentNode.removeChild(animation.element);
             }

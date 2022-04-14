@@ -1,2 +1,2 @@
-export { IsometricShape } from './IsometricShape';
-export { IsometricShapeProps } from './types';
+export { IsometricShape } from './IsometricShape.ts';
+export { type IsometricShapeProps } from './types.ts';

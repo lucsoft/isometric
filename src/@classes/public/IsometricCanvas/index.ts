@@ -1,2 +1,2 @@
-export * from './IsometricCanvas';
-export * from './types';
+export * from './IsometricCanvas.ts';
+export * from './types.ts';

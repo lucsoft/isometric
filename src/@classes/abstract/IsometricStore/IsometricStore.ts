@@ -1,8 +1,8 @@
-import { Store } from '@store';
+import { Store } from '../../../@store/index.ts';
 
 export abstract class IsometricStore {
 
-    protected dataStore: Store;
+    protected dataStore: Store = null!;
 
     public get data(): Store {
         return this.dataStore;

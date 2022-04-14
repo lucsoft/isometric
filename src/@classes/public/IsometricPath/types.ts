@@ -1,4 +1,4 @@
-import { IsometricGraphicProps } from '@classes/abstract/IsometricGraphic';
+import { IsometricGraphicProps } from '../../abstract/IsometricGraphic/index.ts';
 
 export interface IsometricPathProps extends IsometricGraphicProps {
     autoclose?: boolean;

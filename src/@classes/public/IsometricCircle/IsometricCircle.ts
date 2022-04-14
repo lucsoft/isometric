@@ -1,7 +1,7 @@
 import {
     Command,
     PlaneView
-} from '@constants';
+} from '../../../@constants/index.ts';
 import {
     CommandPoint,
     IsometricPlaneView,
@@ -9,15 +9,15 @@ import {
     SVGShapeProperties,
     SVGCircleProperties,
     SVGAnimationObject
-} from '@types';
-import { IsometricShape } from '@classes/abstract/IsometricShape';
+} from '../../../@types/index.ts';
+import { IsometricShape, IsometricShapeProps } from '../../abstract/IsometricShape/index.ts';
 import {
     addSVGProperties,
     getSVGPath,
     getTextureCorner,
     translateCommandPoints
-} from '@utils/svg';
-import { IsometricCircleProps } from './types';
+} from '../../../@utils/svg.ts';
+import { IsometricCircleProps } from './types.ts';
 
 interface GetCirclePathArguments {
     right: number;
@@ -33,16 +33,16 @@ export class IsometricCircle extends IsometricShape {
         // Exclude the next line from the coverage reports
         // Check https://github.com/microsoft/TypeScript/issues/13029
         /* istanbul ignore next */
-        super(rest);
+        super(<IsometricShapeProps>rest);
         this.circleRadius = radius;
     }
 
     private circleRadius: number;
 
     private getCommands(args: GetCirclePathArguments): CommandPoint[] {
-        const { right, left, top, radius } = args;        
+        const { right, left, top, radius } = args;
         const commands: CommandPoint[] = [];
-        switch(this.planeView) {
+        switch (this.planeView) {
             case PlaneView.FRONT:
                 commands.push(
                     {
@@ -93,7 +93,7 @@ export class IsometricCircle extends IsometricShape {
                     {
                         command: Command.curve,
                         point: { r: 0, l: radius, t: 0 },
-                        control: { r: - radius, l: 0, t:0 }
+                        control: { r: - radius, l: 0, t: 0 }
                     }
                 );
                 break;
@@ -114,7 +114,7 @@ export class IsometricCircle extends IsometricShape {
     }
 
     protected privateUpdateAnimations(): void {
-        
+
         this.animations.forEach((animation: SVGAnimationObject): void => {
 
             const args = {
@@ -135,23 +135,23 @@ export class IsometricCircle extends IsometricShape {
                     if (Array.isArray(animation.values)) {
                         values = animation.values.map((value: string | number): string => {
                             const modifiedArgs = { ...args };
-                            modifiedArgs[property] = +value;
+                            modifiedArgs[ property ] = +value;
                             return this.getCirclePath(modifiedArgs);
                         }).join(';');
                     } else {
                         const modifiedArgs = { ...args };
-                        modifiedArgs[property] = +animation.values;
+                        modifiedArgs[ property ] = +animation.values;
                         values = this.getCirclePath(modifiedArgs);
                     }
 
-                    addSVGProperties(animation.element, { values });
+                    addSVGProperties(animation.element!, { values });
 
                 } else {
                     const fromArgs = { ...args };
                     const toArgs = { ...args };
-                    fromArgs[property] = +animation.from;
-                    toArgs[property] = +animation.to;
-                    addSVGProperties(animation.element, {
+                    fromArgs[ property ] = +animation.from!;
+                    toArgs[ property ] = +animation.to!;
+                    addSVGProperties(animation.element!, {
                         from: this.getCirclePath(fromArgs),
                         to: this.getCirclePath(toArgs)
                     });

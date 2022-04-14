@@ -1,2 +1,2 @@
-export * from './IsometricPath';
-export { IsometricPathProps } from './types';
+export * from './IsometricPath.ts';
+export { type IsometricPathProps } from './types.ts';

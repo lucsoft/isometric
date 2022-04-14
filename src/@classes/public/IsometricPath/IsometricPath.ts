@@ -1,17 +1,17 @@
-import { Command } from '@constants';
+import { Command } from '../../../@constants/index.ts';
 import {
     CommandPoint,
     SVGPathAnimation,
     SVGAnimationObject
-} from '@types';
-import { IsometricGraphic } from '@classes/abstract/IsometricGraphic';
+} from '../../../@types/index.ts';
+import { IsometricGraphic } from '../../abstract/IsometricGraphic/index.ts';
 import {
     addSVGProperties,
     parseDrawCommands,
     getSVGPath,
     getTextureCorner
-} from '@utils/svg';
-import { IsometricPathProps } from './types';
+} from '../../../@utils/svg.ts';
+import { IsometricPathProps } from './types.ts';
 
 export class IsometricPath extends IsometricGraphic {
     // Exclude the next constructor from the coverage reports
@@ -21,7 +21,7 @@ export class IsometricPath extends IsometricGraphic {
         super(props);
         this.commands = [];
         this._autoclose = 'autoclose' in this.props
-            ? (this.props as IsometricPathProps).autoclose
+            ? !!(this.props as IsometricPathProps).autoclose
             : true;
     }
 
@@ -37,14 +37,14 @@ export class IsometricPath extends IsometricGraphic {
     );
 
     protected privateUpdateAnimations(): void {
-        
+
         this.animations.forEach((animation: SVGAnimationObject): void => {
 
             if (animation.property === 'path') {
 
                 if (animation.values) {
                     addSVGProperties(
-                        animation.element,
+                        animation.element!,
                         {
                             values: Array.isArray(animation.values)
                                 ? animation.values.map((value: string | number): string => {
@@ -54,7 +54,7 @@ export class IsometricPath extends IsometricGraphic {
                         }
                     );
                 } else {
-                    addSVGProperties(animation.element, {
+                    addSVGProperties(animation.element!, {
                         from: this.getPathFromCommands(`${animation.from}`),
                         to: this.getPathFromCommands(`${animation.to}`)
                     });
@@ -93,7 +93,7 @@ export class IsometricPath extends IsometricGraphic {
                 )
             });
             this.updatePatternTransform(corner);
-            this.updateAnimations();        
+            this.updateAnimations();
         }
         return this;
     }
@@ -110,7 +110,7 @@ export class IsometricPath extends IsometricGraphic {
         this.commands.push({
             command: Command.move,
             point: { r: right, l: left, t: top }
-        });        
+        });
         this.update();
         return this;
     }
@@ -119,7 +119,7 @@ export class IsometricPath extends IsometricGraphic {
         this.commands.push({
             command: Command.line,
             point: { r: right, l: left, t: top }
-        });       
+        });
         this.update();
         return this;
     }
@@ -162,7 +162,7 @@ export class IsometricPath extends IsometricGraphic {
     public draw(commands: string): IsometricPath {
         this.commands = parseDrawCommands(commands);
         this.update();
-        return this;  
+        return this;
     }
 
     public addAnimation(animation: SVGPathAnimation): IsometricPath {

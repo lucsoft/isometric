@@ -1,2 +1,2 @@
-export { IsometricGraphic } from './IsometricGraphic';
-export { IsometricGraphicProps } from './types';
+export { IsometricGraphic } from './IsometricGraphic.ts';
+export { type IsometricGraphicProps } from './types.ts';

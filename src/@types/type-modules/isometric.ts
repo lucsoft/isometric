@@ -2,7 +2,7 @@ import {
     PlaneView,
     Command,
     Axis
-} from '@constants';
+} from '../../@constants/index.ts';
 
 export type IsometricPlaneView = keyof typeof PlaneView;
 
@@ -33,7 +33,7 @@ export interface CurvePoint {
 
 export type CommandPoint = LinePoint | CurvePoint;
 
-export type EllipsisSpecs = [number, number, number];
+export type EllipsisSpecs = [ number, number, number ];
 
 export interface Rotation {
     axis: IsometricAxis;

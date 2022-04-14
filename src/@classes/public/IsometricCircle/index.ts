@@ -1,2 +1,2 @@
-export { IsometricCircle } from './IsometricCircle';
-export { IsometricCircleProps } from './types';
+export { IsometricCircle } from './IsometricCircle.ts';
+export { type IsometricCircleProps } from './types.ts';

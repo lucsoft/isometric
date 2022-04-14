@@ -2,31 +2,31 @@ import {
     Matrix,
     IsometricPlaneView,
     Rotation
-} from '@types';
+} from '../@types/index.ts';
 import {
     PlaneView,
     Axis,
     ROT_45,
     ROT_60,
     ROT_CMA
-} from '@constants';
-import { sincos, radian } from '@utils/math';
+} from '../@constants/index.ts';
+import { sincos, radian } from './math.ts';
 
 const multiplyMatrix = (m1: Matrix, m2: Matrix): Matrix => (
     m1.map((row, i): number[] => (
-        m2[0].map((_: number, j: number): number =>
+        m2[ 0 ].map((_: number, j: number): number =>
             row.reduce((acc: number, _: number, n: number): number =>
-                acc + m1[i][n] * m2[n][j],
+                acc + m1[ i ][ n ] * m2[ n ][ j ],
                 0
             )
         )
     )
-));
+    ));
 
 const multiplyMatrices = (...m: Matrix[]): Matrix => {
-    let matrix = m[0];
+    let matrix = m[ 0 ];
     for (let i = 1; i < m.length; i++) {
-        matrix = multiplyMatrix(matrix, m[i]);
+        matrix = multiplyMatrix(matrix, m[ i ]);
     }
     return matrix;
 };
@@ -34,27 +34,27 @@ const multiplyMatrices = (...m: Matrix[]): Matrix => {
 const rotateX = (r: number): Matrix => {
     const sc = sincos(r);
     return [
-        [1,        0,        0     ],
-        [0,        sc.cos, - sc.sin],
-        [0,        sc.sin,   sc.cos]
+        [ 1, 0, 0 ],
+        [ 0, sc.cos, - sc.sin ],
+        [ 0, sc.sin, sc.cos ]
     ];
 };
 
 const rotateY = (r: number): Matrix => {
     const sc = sincos(r);
     return [
-        [sc.cos,   0,      sc.sin],
-        [0,        1,      0     ],
-        [- sc.sin, 0,      sc.cos]
+        [ sc.cos, 0, sc.sin ],
+        [ 0, 1, 0 ],
+        [ - sc.sin, 0, sc.cos ]
     ];
 };
 
 const rotateZ = (r: number): Matrix => {
     const sc = sincos(r);
     return [
-        [sc.cos, - sc.sin,  0],
-        [sc.sin,   sc.cos,  0],
-        [0,        0,       1]
+        [ sc.cos, - sc.sin, 0 ],
+        [ sc.sin, sc.cos, 0 ],
+        [ 0, 0, 1 ]
     ];
 };
 
@@ -77,9 +77,9 @@ const sideMatrix = multiplyMatrices(
 
 const rotationToRotationMatrix = (view: IsometricPlaneView, rotation: Rotation): Matrix | null => {
     const value = radian(rotation.value);
-    switch(view) {
+    switch (view) {
         case PlaneView.TOP: {
-            switch(rotation.axis) {
+            switch (rotation.axis) {
                 case Axis.TOP:
                     return rotateZ(value);
                 case Axis.LEFT:
@@ -91,10 +91,10 @@ const rotationToRotationMatrix = (view: IsometricPlaneView, rotation: Rotation):
             }
         }
         case PlaneView.FRONT: {
-            switch(rotation.axis) {
+            switch (rotation.axis) {
                 case Axis.TOP:
                     return rotateY(value);
-                case Axis.LEFT:                    
+                case Axis.LEFT:
                     return rotateX(value);
                 case Axis.RIGHT:
                     return rotateZ(value);
@@ -103,7 +103,7 @@ const rotationToRotationMatrix = (view: IsometricPlaneView, rotation: Rotation):
             }
         }
         case PlaneView.SIDE: {
-            switch(rotation.axis) {
+            switch (rotation.axis) {
                 case Axis.TOP:
                     return rotateY(value);
                 case Axis.LEFT:
@@ -123,16 +123,16 @@ export const getViewMatrix = (
     planeView: IsometricPlaneView,
     rotation?: Rotation
 ): Matrix | null => {
-    
-    const rotationMatrices: Matrix[]  = [];
+
+    const rotationMatrices: Matrix[] = [];
 
     const rotationMatrix = rotation
         ? rotationToRotationMatrix(planeView, rotation)
         : null;
-        
-    if (rotationMatrix) rotationMatrices.push(rotationMatrix);    
-    
-    switch(planeView) {
+
+    if (rotationMatrix) rotationMatrices.push(rotationMatrix);
+
+    switch (planeView) {
         case PlaneView.TOP: {
             return multiplyMatrices(topMatrix, ...rotationMatrices);
         }

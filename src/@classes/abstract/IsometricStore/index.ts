@@ -1,1 +1,1 @@
-export { IsometricStore } from './IsometricStore';
+export { IsometricStore } from './IsometricStore.ts';
