@@ -3,8 +3,8 @@ import {
     IsometricPoint,
     EllipsisSpecs,
     SinCos
-} from '@types';
-import { HSQRT3, DECIMALS } from '@constants';
+} from '../@types/index.ts';
+import { HSQRT3, DECIMALS } from '../@constants/index.ts';
 
 export const round = (n: number, d: number): number => {
     const exp = Math.pow(10, d);
@@ -62,8 +62,8 @@ export const getPointFromIsometricPoint = (
     scale: number
 ): IsometricPoint => {
     return {
-        x: round(centerX + (point.r - point.l) * scale * HSQRT3, DECIMALS),
-        y: round(centerY + ((point.r + point.l) / 2 - point.t) * scale, DECIMALS)
+        x: round(centerX + (point.r! - point.l!) * scale * HSQRT3, DECIMALS),
+        y: round(centerY + ((point.r! + point.l!) / 2 - point.t!) * scale, DECIMALS)
     };
 };
 
@@ -71,7 +71,7 @@ export const getEllipsisSpecs = (pointA: IsometricPoint, pointB: IsometricPoint,
     const diff = getPointsDiff(pointB, pointA);
     const center = { x: pointA.x + diff.x / 2, y: pointA.y + diff.y / 2 };
     const P = rotate(pointB, center, Math.PI / 2);
-    const D = { x: P.x + (control.x - P.x) / 2, y: P.y + (control.y - P.y) / 2};
+    const D = { x: P.x + (control.x - P.x) / 2, y: P.y + (control.y - P.y) / 2 };
     const radius = getPointsDistance(D, center);
     const U = translatePoint(D, getPointsAngle(D, P), radius);
     const V = translatePoint(D, getPointsAngle(D, control), radius);

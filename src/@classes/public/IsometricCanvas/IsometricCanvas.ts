@@ -5,17 +5,17 @@ import {
     DEFAULT_WIDTH,
     DEFAULT_HEIGHT,
     Colors
-} from '@constants';
-import { IsometricStore } from '@classes/abstract/IsometricStore';
-import { Listener } from '@types';
-import { IsometricGraphic } from '@classes/abstract/IsometricGraphic';
-import { IsometricCanvasProps } from './types';
+} from '../../../@constants/index.ts';
+import { IsometricStore } from '../../abstract/IsometricStore/index.ts';
+import { Listener } from '../../../@types/index.ts';
+import { IsometricGraphic } from '../../abstract/IsometricGraphic/index.ts';
+import { IsometricCanvasProps } from './types.ts';
 import {
     addSVGProperties,
     addEventListenerToElement,
     removeEventListenerFromElement
-} from '@utils/svg';
-import { Store } from '@store';
+} from '../../../@utils/svg.ts';
+import { Store } from '../../../@store/index.ts';
 
 const defaultProps: IsometricCanvasProps = {
     container: 'body',
@@ -36,13 +36,13 @@ export class IsometricCanvas extends IsometricStore {
         this.isAnimated = true;
 
         this.data = new Store(
-            this.props.width,
-            this.props.height,
-            this.props.scale
+            this.props.width!,
+            this.props.height!,
+            this.props.scale!
         );
 
         addSVGProperties(this.svg, {
-            [SVG_PROPERTIES.viewBox]: `0 0 ${this.data.width} ${this.data.height}`,
+            [ SVG_PROPERTIES.viewBox ]: `0 0 ${this.data.width} ${this.data.height}`,
             width: `${this.data.width}px`,
             height: `${this.data.height}px`
         });
@@ -63,10 +63,10 @@ export class IsometricCanvas extends IsometricStore {
             ? document.querySelector(this.props.container)
             : this.props.container;
 
-        containerElement.appendChild(this.svg);
+        containerElement!.appendChild(this.svg);
 
     }
-    
+
     private props: IsometricCanvasProps;
     private children: IsometricGraphic[];
     private svg: SVGSVGElement;
@@ -106,7 +106,7 @@ export class IsometricCanvas extends IsometricStore {
     }
 
     public get backgroundColor(): string {
-        return this.props.backgroundColor;
+        return this.props.backgroundColor!;
     }
 
     public set backgroundColor(value: string) {
@@ -130,7 +130,7 @@ export class IsometricCanvas extends IsometricStore {
     public set height(value: number) {
         this.data.height = value;
         addSVGProperties(this.svg, {
-            [SVG_PROPERTIES.viewBox]: `0 0 ${this.data.width} ${this.data.height}`,
+            [ SVG_PROPERTIES.viewBox ]: `0 0 ${this.data.width} ${this.data.height}`,
             height: `${this.data.height}px`
         });
         addSVGProperties(this.background, {
@@ -146,7 +146,7 @@ export class IsometricCanvas extends IsometricStore {
     public set width(value: number) {
         this.data.width = value;
         addSVGProperties(this.svg, {
-            [SVG_PROPERTIES.viewBox]: `0 0 ${this.data.width} ${this.data.height}`,
+            [ SVG_PROPERTIES.viewBox ]: `0 0 ${this.data.width} ${this.data.height}`,
             width: `${this.data.width}px`
         });
         addSVGProperties(this.background, {
@@ -197,15 +197,15 @@ export class IsometricCanvas extends IsometricStore {
 
     public pauseAnimations(): void {
         /* istanbul ignore next */ /* jsdom doesn't have SVGSVGElement methods */
-        if (typeof(this.svg.pauseAnimations) === 'function') {
+        if (typeof (this.svg.pauseAnimations) === 'function') {
             this.svg.pauseAnimations();
         }
-        this.isAnimated = false;      
+        this.isAnimated = false;
     }
 
     public resumeAnimations(): void {
         /* istanbul ignore next */ /* jsdom doesn't have SVGSVGElement methods */
-        if (typeof(this.svg.unpauseAnimations) === 'function') {
+        if (typeof (this.svg.unpauseAnimations) === 'function') {
             this.svg.unpauseAnimations();
         }
         this.isAnimated = true;
