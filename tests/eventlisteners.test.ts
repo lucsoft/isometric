@@ -1,6 +1,14 @@
-import { IsometricCanvas, IsometricPath } from '../src';
-
-describe('Test event listeners', (): void => {
+import { IsometricCanvas, IsometricPath } from '../mod.ts';
+import {
+    describe,
+    it,
+    beforeEach,
+    afterEach,
+    spy,
+    assertSpyCalls,
+    assertEquals
+} from "./deps.ts";
+describe('Test event listeners', { sanitizeOps: false }, (): void => {
 
     let container: HTMLDivElement;
     let cube: IsometricCanvas;
@@ -34,12 +42,12 @@ describe('Test event listeners', (): void => {
     afterEach((): void => {
         if (container.parentNode && container.parentNode === document.body) {
             document.body.removeChild(container);
-        }        
+        }
     });
 
     it('IsometricCanvas event listeners', (): void => {
 
-        const mockCallBack = jest.fn();
+        const mockCallBack = spy();
 
         cube.addEventListener('click', mockCallBack, true);
 
@@ -47,27 +55,24 @@ describe('Test event listeners', (): void => {
         event.initEvent('click', true, true);
 
         svgElement.dispatchEvent(event);
-
-        expect(mockCallBack.mock.calls[0][0].target).toBe(svgElement);
+        assertEquals(mockCallBack.calls[ 0 ].args[ 0 ].target, svgElement)
 
         cube.removeEventListener('click', mockCallBack, true);
 
         svgElement.dispatchEvent(event);
-
-        expect(mockCallBack.mock.calls[1]).toBeUndefined();
+        assertSpyCalls(mockCallBack, 1);
 
         cube.addEventListener('click', mockCallBack);
         cube.removeEventListener('click', mockCallBack);
 
         svgElement.dispatchEvent(event);
 
-        expect(mockCallBack.mock.calls[1]).toBeUndefined();
-
+        assertSpyCalls(mockCallBack, 1);
     });
 
     it('IsometricPath event listeners', (): void => {
-        
-        const mockCallBack = jest.fn();
+
+        const mockCallBack = spy();
 
         top.addEventListener('click', mockCallBack, true);
 
@@ -76,41 +81,35 @@ describe('Test event listeners', (): void => {
 
         topElement.dispatchEvent(event);
 
-        expect(mockCallBack.mock.calls[0][0].target).toBe(topElement);
+        assertEquals(mockCallBack.calls[ 0 ].args[ 0 ].target, topElement);
 
         top.removeEventListener('click', mockCallBack, true);
 
         topElement.dispatchEvent(event);
 
-        expect(mockCallBack.mock.calls[1]).toBeUndefined();
+        assertSpyCalls(mockCallBack, 1);
 
         top.addEventListener('click', mockCallBack);
         top.removeEventListener('click', mockCallBack);
 
         topElement.dispatchEvent(event);
 
-        expect(mockCallBack.mock.calls[1]).toBeUndefined();
-        
+        assertSpyCalls(mockCallBack, 1);
     });
 
     it('Remove event listeners that have not been added', (): void => {
 
-        const mockCallBack = jest.fn();
-        const mockCallBackNotAdded = jest.fn();
+        const mockCallBack = spy();
+        const mockCallBackNotAdded = spy();
 
         cube.addEventListener('click', mockCallBack);
         top.addEventListener('click', mockCallBack);
 
         // Remove an event listsner that doesn't exist should not throw an error
-        expect(() => {
-            cube.removeEventListener('click', mockCallBackNotAdded);
-        }).not.toThrowError();
+        cube.removeEventListener('click', mockCallBackNotAdded);
 
         // Remove an event listsner that doesn't exist should not throw an error
-        expect(() => {
-            top.removeEventListener('click', mockCallBackNotAdded);
-        }).not.toThrowError();
-
+        top.removeEventListener('click', mockCallBackNotAdded);
     });
 
 });

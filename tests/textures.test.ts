@@ -5,12 +5,20 @@ import {
     IsometricPath,
     PlaneView,
     Axis
-} from '../src';
-import { Texture } from '../src/@types';
+} from '../mod.ts';
+import { Texture } from '../src/@types/index.ts';
+import {
+    afterEach,
+    beforeEach,
+    describe,
+    it,
+    assert,
+    assertEquals
+} from "./deps.ts";
 
 const PATH_COMMANDS = 'M1 1 0.5 L0 1 1 L0 0 1 L1 0 0.5';
 
-describe('Test textures', (): void => {
+describe('Test textures', { sanitizeOps: false }, (): void => {
 
     const containerID = 'container';
     const containerSelector = `#${containerID}`;
@@ -51,7 +59,7 @@ describe('Test textures', (): void => {
     afterEach((): void => {
         if (container.parentNode && container.parentNode === document.body) {
             document.body.removeChild(container);
-        }        
+        }
     });
 
     it('Check pattern', () => {
@@ -66,12 +74,11 @@ describe('Test textures', (): void => {
 
         pathPattern = path.getPattern();
 
-        expect(pathPattern).toBeTruthy();
-        expect(isometricElement.contains(pathPattern)).toBeTruthy();
-        expect(pathPattern.getAttribute('preserveAspectRatio')).toBe('none');
-        expect(pathPattern.getAttribute('patternUnits')).toBe('userSpaceOnUse');
-        expect(pathPattern.getAttribute('height')).toBe('120');
-        expect(pathPattern.getAttribute('width')).toBe('120');
+        assert(isometricElement.contains(pathPattern));
+        assertEquals(pathPattern.getAttribute('preserveAspectRatio'), 'none');
+        assertEquals(pathPattern.getAttribute('patternUnits'), 'userSpaceOnUse');
+        assertEquals(pathPattern.getAttribute('height'), '120');
+        assertEquals(pathPattern.getAttribute('width'), '120');
 
         isometric.removeChild(path);
 
@@ -87,8 +94,8 @@ describe('Test textures', (): void => {
 
         pathPattern = path.getPattern();
 
-        expect(pathPattern.getAttribute('height')).toBe('100%');
-        expect(pathPattern.getAttribute('width')).toBe('100%');
+        assertEquals(pathPattern.getAttribute('height'), '100%');
+        assertEquals(pathPattern.getAttribute('width'), '100%');
 
     });
 
@@ -103,21 +110,21 @@ describe('Test textures', (): void => {
 
         isometric.addChild(path);
 
-        pathPattern = path.getPattern();
+        pathPattern = path.getPattern()!;
 
-        expect(pathPattern.firstChild).toBeTruthy();
-        expect(pathPattern.childNodes.length).toBe(1);
-        expect(pathPattern.firstChild.nodeName).toBe('image');
+        assert(pathPattern.firstChild);
+        assertEquals(pathPattern.childNodes.length, 1);
+        assertEquals(pathPattern.firstChild.nodeName, 'image');
 
         let image = pathPattern.firstChild as SVGImageElement;
 
-        expect(image.getAttribute('preserveAspectRatio')).toBe('none');
-        expect(image.getAttribute('href')).toBe('/images/texture.png');
-        expect(image.getAttribute('x')).toBe('0');
-        expect(image.getAttribute('y')).toBe('0');
-        expect(image.getAttribute('height')).toBe('120');
-        expect(image.getAttribute('width')).toBe('120');
-        expect(image.style.imageRendering).toBe('');
+        assertEquals(image.getAttribute('preserveAspectRatio'), 'none');
+        assertEquals(image.getAttribute('href'), '/images/texture.png');
+        assertEquals(image.getAttribute('x'), '0');
+        assertEquals(image.getAttribute('y'), '0');
+        assertEquals(image.getAttribute('height'), '120');
+        assertEquals(image.getAttribute('width'), '120');
+        assertEquals(image.style.imageRendering, '');
 
         isometric.removeChild(path);
 
@@ -134,10 +141,9 @@ describe('Test textures', (): void => {
         isometric.addChild(path);
 
         pathPattern = path.getPattern();
-
         image = pathPattern.firstChild as SVGImageElement;
 
-        expect(image.style.imageRendering).toBe('pixelated');
+        assertEquals(image.style.imageRendering, 'pixelated');
 
         isometric.removeChild(path);
 
@@ -153,11 +159,11 @@ describe('Test textures', (): void => {
         isometric.addChild(path);
 
         pathPattern = path.getPattern();
-
+        assert(pathPattern)
         image = pathPattern.firstChild as SVGImageElement;
 
-        expect(image.getAttribute('height')).toBe('100%');
-        expect(image.getAttribute('width')).toBe('100%');
+        assertEquals(image.getAttribute('height'), '100%');
+        assertEquals(image.getAttribute('width'), '100%');
 
     });
 
@@ -168,17 +174,17 @@ describe('Test textures', (): void => {
         });
 
         path.draw(PATH_COMMANDS);
-    
+
         isometric.addChild(path);
 
         pathElement = path.getElement();
         pathPattern = path.getPattern();
 
-        expect(pathElement.getAttribute('fill')).toBe(`url(#${pathPattern.id}) white`);
+        assertEquals(pathElement.getAttribute('fill'), `url(#${pathPattern.id}) white`);
 
         path.fillColor = '#EFEFEF';
 
-        expect(pathElement.getAttribute('fill')).toBe(`url(#${pathPattern.id}) #EFEFEF`);
+        assertEquals(pathElement.getAttribute('fill'), `url(#${pathPattern.id}) #EFEFEF`);
 
     });
 
@@ -188,12 +194,11 @@ describe('Test textures', (): void => {
         path = new IsometricPath({
             texture
         });
-    
+
         isometric.addChild(path);
 
         pathPattern = path.getPattern();
-
-        expect(pathPattern.getAttribute('patternTransform')).toBe('translate(9007199254740991 9007199254740991)');
+        assertEquals(pathPattern.getAttribute('patternTransform'), 'translate(9007199254740991 9007199254740991)');
 
         isometric.removeChild(path);
 
@@ -285,12 +290,11 @@ describe('Test textures', (): void => {
             });
 
             path.draw(PATH_COMMANDS);
-    
+
             isometric.addChild(path);
 
             pathPattern = path.getPattern();
-
-            expect(pathPattern.getAttribute('patternTransform')).toBe(props.value);
+            assertEquals(pathPattern.getAttribute('patternTransform'), props.value);
 
             isometric.removeChild(path);
 
@@ -399,12 +403,12 @@ describe('Test textures', (): void => {
                     }
                 }
             });
-        
+
             isometric.addChild(rectangle);
-            
-            let rectanglePattern = rectangle.getPattern();
-    
-            expect(rectanglePattern.getAttribute('patternTransform')).toBe(test.expect);
+
+            const rectanglePattern = rectangle.getPattern();
+            assert(rectanglePattern);
+            assertEquals(rectanglePattern.getAttribute('patternTransform'), test.expect);
 
         });
 
@@ -424,7 +428,8 @@ describe('Test textures', (): void => {
 
         let patternRectangle = rectangle.getPattern();
 
-        expect(patternRectangle.getAttribute('patternTransform')).toBe('translate(146.077 220) matrix(0.707107,-0.408248,0.707107,0.408248,0,0) scale(1.224745)');
+        assert(patternRectangle)
+        assertEquals(patternRectangle.getAttribute('patternTransform'), 'translate(146.077 220) matrix(0.707107,-0.408248,0.707107,0.408248,0,0) scale(1.224745)');
 
         isometric.removeChild(rectangle);
 
@@ -440,7 +445,8 @@ describe('Test textures', (): void => {
 
         patternRectangle = rectangle.getPattern();
 
-        expect(patternRectangle.getAttribute('patternTransform')).toBe('translate(250 40) matrix(0.707107,0.408248,0,0.816496,0,0) scale(1.224745)');
+        assert(patternRectangle)
+        assertEquals(patternRectangle.getAttribute('patternTransform'), 'translate(250 40) matrix(0.707107,0.408248,0,0.816496,0,0) scale(1.224745)');
 
         isometric.removeChild(rectangle);
 
@@ -456,7 +462,8 @@ describe('Test textures', (): void => {
 
         patternRectangle = rectangle.getPattern();
 
-        expect(patternRectangle.getAttribute('patternTransform')).toBe('translate(146.077 100) matrix(0.707107,-0.408248,0,0.816496,0,0) scale(1.224745)');
+        assert(patternRectangle)
+        assertEquals(patternRectangle.getAttribute('patternTransform'), 'translate(146.077 100) matrix(0.707107,-0.408248,0,0.816496,0,0) scale(1.224745)');
 
         isometric.removeChild(rectangle);
 
@@ -475,7 +482,8 @@ describe('Test textures', (): void => {
 
         let patternCircle = circle.getPattern();
 
-        expect(patternCircle.getAttribute('patternTransform')).toBe('translate(198.0385 190) matrix(0.707107,-0.408248,0.707107,0.408248,0,0) scale(1.224745)');
+        assert(patternCircle)
+        assertEquals(patternCircle.getAttribute('patternTransform'), 'translate(198.0385 190) matrix(0.707107,-0.408248,0.707107,0.408248,0,0) scale(1.224745)');
 
         isometric.removeChild(circle);
 
@@ -490,7 +498,7 @@ describe('Test textures', (): void => {
 
         patternCircle = circle.getPattern();
 
-        expect(patternCircle.getAttribute('patternTransform')).toBe('translate(198.0385 130) matrix(0.707107,0.408248,0,0.816496,0,0) scale(1.224745)');
+        assertEquals(patternCircle.getAttribute('patternTransform'), 'translate(198.0385 130) matrix(0.707107,0.408248,0,0.816496,0,0) scale(1.224745)');
 
         isometric.removeChild(circle);
 
@@ -505,11 +513,12 @@ describe('Test textures', (): void => {
 
         patternCircle = circle.getPattern();
 
-        expect(patternCircle.getAttribute('patternTransform')).toBe('translate(198.0385 190) matrix(0.707107,-0.408248,0,0.816496,0,0) scale(1.224745)');
+        assert(patternCircle)
+        assertEquals(patternCircle.getAttribute('patternTransform'), 'translate(198.0385 190) matrix(0.707107,-0.408248,0,0.816496,0,0) scale(1.224745)');
 
         isometric.removeChild(circle);
 
-    }); 
+    });
 
     it('Check pattern removal', () => {
 
@@ -518,28 +527,28 @@ describe('Test textures', (): void => {
         });
 
         path.draw(PATH_COMMANDS);
-    
+
         isometric.addChildren(path);
 
         pathPattern = path.getPattern();
 
         isometric.removeChildren(path);
 
-        expect(isometricElement.contains(pathPattern)).toBeFalsy();
+        assert(!isometricElement.contains(pathPattern));
 
     });
-    
+
     it('Check texture property', () => {
 
         path = new IsometricPath();
 
         path.draw(PATH_COMMANDS);
-    
+
         isometric.addChildren(path);
 
         pathPattern = path.getPattern();
 
-        expect(pathPattern).toBeFalsy();
+        assert(!pathPattern);
 
         let cloneTexture: Texture = {
             ...texture,
@@ -550,8 +559,8 @@ describe('Test textures', (): void => {
 
         pathPattern = path.getPattern();
 
-        expect(path.texture).toMatchObject(cloneTexture);
-        expect(pathPattern.getAttribute('patternTransform')).toBe('translate(146.077 100) matrix(0.707107,-0.408248,0.707107,0.408248,0,0) scale(1.224745)');
+        assertEquals(path.texture, cloneTexture);
+        assertEquals(pathPattern.getAttribute('patternTransform'), 'translate(146.077 100) matrix(0.707107,-0.408248,0.707107,0.408248,0,0) scale(1.224745)');
 
         cloneTexture = {
             ...cloneTexture,
@@ -562,9 +571,9 @@ describe('Test textures', (): void => {
         path.texture = cloneTexture;
         const image = pathPattern.firstChild as SVGImageElement;
 
-        expect(path.texture).toMatchObject(cloneTexture);
-        expect(image.style.imageRendering).toBe('');
-        expect(pathPattern.getAttribute('patternTransform')).toBe('translate(250 160) matrix(0.707107,-0.408248,0.707107,0.408248,0,0) scale(0.612372)');
+        assertEquals(path.texture, cloneTexture);
+        assertEquals(image.style.imageRendering, '');
+        assertEquals(pathPattern.getAttribute('patternTransform'), 'translate(250 160) matrix(0.707107,-0.408248,0.707107,0.408248,0,0) scale(0.612372)');
 
     });
 
@@ -573,7 +582,7 @@ describe('Test textures', (): void => {
         path = new IsometricPath();
 
         path.draw(PATH_COMMANDS);
-    
+
         isometric.addChildren(path);
 
         path.updateTexture({
@@ -583,12 +592,13 @@ describe('Test textures', (): void => {
         });
 
         pathPattern = path.getPattern();
+
         let image = pathPattern.firstChild as SVGImageElement;
 
-        expect(pathPattern.getAttribute('height')).toBe('240');
-        expect(pathPattern.getAttribute('width')).toBe('360');
-        expect(image.getAttribute('height')).toBe('240');
-        expect(image.getAttribute('width')).toBe('360');
+        assertEquals(pathPattern.getAttribute('height'), '240');
+        assertEquals(pathPattern.getAttribute('width'), '360');
+        assertEquals(image.getAttribute('height'), '240');
+        assertEquals(image.getAttribute('width'), '360');
 
         isometric.removeChild(path);
 
@@ -597,10 +607,10 @@ describe('Test textures', (): void => {
         });
 
         path.draw(PATH_COMMANDS);
-    
+
         isometric.addChildren(path);
 
-        let cloneTexture = {
+        const cloneTexture = {
             ...texture,
             planeView: PlaneView.TOP,
             shift: { left: 1 },
@@ -616,14 +626,14 @@ describe('Test textures', (): void => {
         pathPattern = path.getPattern();
         image = pathPattern.firstChild as SVGImageElement;
 
-        expect(path.texture).toMatchObject({
+        assertEquals(path.texture, {
             ...cloneTexture,
             shift: { left: 1 }
-        });       
+        });
 
-        expect(image.getAttribute('href')).toBe(cloneTexture.url);
-        expect(image.style.imageRendering).toBe('pixelated');
-        expect(pathPattern.getAttribute('patternTransform')).toBe('translate(42.154 160) matrix(0.965926,-0.149429,0.258819,0.557677,0,0) scale(1.224745)');
+        assertEquals(image.getAttribute('href'), cloneTexture.url);
+        assertEquals(image.style.imageRendering, 'pixelated');
+        assertEquals(pathPattern.getAttribute('patternTransform'), 'translate(42.154 160) matrix(0.965926,-0.149429,0.258819,0.557677,0,0) scale(1.224745)');
 
         const newUrl = '/images/new_texture.png';
 
@@ -631,31 +641,31 @@ describe('Test textures', (): void => {
             url: newUrl
         });
 
-        expect(path.texture).toMatchObject({
+        assertEquals(path.texture, {
             ...cloneTexture,
             url: newUrl,
             shift: { left: 1 }
         });
-        expect(image.getAttribute('href')).toBe(newUrl);
-        
+        assertEquals(image.getAttribute('href'), newUrl);
+
         path.updateTexture({
             url: texture.url,
             pixelated: false
         });
 
-        expect(path.texture).toMatchObject({
+        assertEquals(path.texture, {
             ...cloneTexture,
             shift: { left: 1 },
             pixelated: false
         });
-        expect(image.style.imageRendering).toBe('');
+        assertEquals(image.style.imageRendering, '');
 
         isometric.removeChildren(path);
 
         path = new IsometricPath();
 
         path.draw(PATH_COMMANDS);
-    
+
         isometric.addChildren(path);
 
         path.updateTexture({
@@ -664,9 +674,9 @@ describe('Test textures', (): void => {
 
         pathPattern = path.getPattern();
 
-        expect(pathPattern).toBeFalsy();
+        assert(!pathPattern);
 
-        isometric.removeChild(path);       
+        isometric.removeChild(path);
 
     });
 

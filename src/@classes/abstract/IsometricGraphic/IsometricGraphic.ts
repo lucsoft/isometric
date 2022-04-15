@@ -320,7 +320,7 @@ export abstract class IsometricGraphic extends IsometricStore {
         return this.path;
     }
 
-    public getPattern(): SVGPatternElement | undefined {
+    public getPattern(): SVGPatternElement {
         return this.pattern;
     }
 

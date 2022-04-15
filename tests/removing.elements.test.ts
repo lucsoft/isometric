@@ -1,6 +1,10 @@
-import { IsometricCanvas, IsometricPath } from '../src';
-
-describe('Removing methods', (): void => {
+import { IsometricCanvas, IsometricPath } from '../mod.ts';
+import {
+    describe,
+    it,
+    assertEquals
+} from "./deps.ts";
+describe('Removing methods', { sanitizeOps: false }, (): void => {
 
     let container: HTMLDivElement;
 
@@ -16,11 +20,11 @@ describe('Removing methods', (): void => {
             width: 500,
             height: 320
         });
-    
+
         const top = new IsometricPath();
         const right = new IsometricPath();
         const left = new IsometricPath();
-    
+
         top.moveTo(0, 0, 1).lineTo(1, 0, 1).lineTo(1, 1, 1).lineTo(0, 1, 1);
         right.moveTo(1, 0, 1).lineTo(1, 0, 0).lineTo(1, 1, 0).lineTo(1, 1, 1);
         left.moveTo(1, 1, 1).lineTo(1, 1, 0).lineTo(0, 1, 0).lineTo(0, 1, 1);
@@ -31,50 +35,43 @@ describe('Removing methods', (): void => {
         const rightElement = right.getElement();
         const leftElement = left.getElement();
 
-        expect(topElement.parentNode).toBe(svgElement);
-        expect(rightElement.parentNode).toBe(svgElement);
-        expect(leftElement.parentNode).toBe(svgElement);
+        assertEquals(topElement.parentNode, svgElement);
+        assertEquals(rightElement.parentNode, svgElement);
+        assertEquals(leftElement.parentNode, svgElement);
 
         cube.removeChild(top);
 
-        expect(topElement.parentNode).toBeNull();
-        
+        assertEquals(topElement.parentNode, null);
+
         cube.removeChildByIndex(0);
 
-        expect(rightElement.parentNode).toBeNull();
+        assertEquals(rightElement.parentNode, null);
 
         // Clear IsometricCanvas
         cube.clear();
 
-        expect(leftElement.parentNode).toBeNull();
+        assertEquals(leftElement.parentNode, null);
 
         cube.addChildren(top, right, left);
 
         cube.removeChildren(top, right, left);
 
-        expect(topElement.parentNode).toBeNull();
-        expect(rightElement.parentNode).toBeNull();
-        expect(leftElement.parentNode).toBeNull();
+        assertEquals(topElement.parentNode, null);
+        assertEquals(rightElement.parentNode, null);
+        assertEquals(leftElement.parentNode, null);
 
         // Clear IsometricPath
         left.clear();
-        expect(leftElement.getAttribute('d')).toBe('');
+        assertEquals(leftElement.getAttribute('d'), '');
 
         // Removing wrong elements should not throw errors
-        expect(() => {
-            cube.removeChild(top);
-        }).not.toThrowError();
+        cube.removeChild(top);
 
-        expect(() => {
-            cube.addChild(top);
-            topElement.parentNode.removeChild(topElement);
-            cube.removeChild(top);
-        }).not.toThrowError();
+        cube.addChild(top);
+        topElement.parentNode!.removeChild(topElement);
+        cube.removeChild(top);
 
-        expect(() => {
-            cube.removeChildByIndex(10);
-        }).not.toThrowError();
-
+        cube.removeChildByIndex(10);
     });
 
 });
